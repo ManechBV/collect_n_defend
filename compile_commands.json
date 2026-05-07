@@ -1,0 +1,41 @@
+[
+  {
+    "file": "src/main.c",
+    "arguments": [
+      "/usr/bin/gcc",
+      "src/main.c",
+      "-Iinclude",
+      "-Isrc",
+      "-o",
+      "c0ll3ctNd3f3nd"
+    ],
+    "directory": "/home/namek/Dev/C/RAYLIB/collect_n_defend",
+    "output": "c0ll3ctNd3f3nd"
+  },
+  {
+    "file": "src/errorMsg.c",
+    "arguments": [
+      "/usr/bin/gcc",
+      "src/errorMsg.c",
+      "-Iinclude",
+      "-Isrc",
+      "-o",
+      "c0ll3ctNd3f3nd"
+    ],
+    "directory": "/home/namek/Dev/C/RAYLIB/collect_n_defend",
+    "output": "c0ll3ctNd3f3nd"
+  },
+  {
+    "file": "src/gridMap.c",
+    "arguments": [
+      "/usr/bin/gcc",
+      "src/gridMap.c",
+      "-Iinclude",
+      "-Isrc",
+      "-o",
+      "c0ll3ctNd3f3nd"
+    ],
+    "directory": "/home/namek/Dev/C/RAYLIB/collect_n_defend",
+    "output": "c0ll3ctNd3f3nd"
+  }
+]
