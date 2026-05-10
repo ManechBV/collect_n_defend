@@ -6,6 +6,7 @@
       "src/main.c",
       "-Iinclude",
       "-Isrc",
+      "-g",
       "-o",
       "c0ll3ctNd3f3nd"
     ],
@@ -19,6 +20,7 @@
       "src/errorMsg.c",
       "-Iinclude",
       "-Isrc",
+      "-g",
       "-o",
       "c0ll3ctNd3f3nd"
     ],
@@ -32,6 +34,21 @@
       "src/gridMap.c",
       "-Iinclude",
       "-Isrc",
+      "-g",
+      "-o",
+      "c0ll3ctNd3f3nd"
+    ],
+    "directory": "/home/namek/Dev/C/RAYLIB/collect_n_defend",
+    "output": "c0ll3ctNd3f3nd"
+  },
+  {
+    "file": "src/entityBuffer.c",
+    "arguments": [
+      "/usr/bin/gcc",
+      "src/entityBuffer.c",
+      "-Iinclude",
+      "-Isrc",
+      "-g",
       "-o",
       "c0ll3ctNd3f3nd"
     ],

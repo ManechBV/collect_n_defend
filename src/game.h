@@ -23,6 +23,7 @@ typedef struct  s_entity
     void                    *data;
     enum e_entityDataType   data_type;
     void                    (*ftptr_drawEntityMethod)(int i);
+    void                    (*ftptr_freeEntityMethod)(int i);
     struct s_entity         *next;
     struct s_entity         *prev;
 }   t_entity;
@@ -76,5 +77,6 @@ void        ft_freeGridMap(t_gridMap *grid_map);
 void        ft_gridMapSetTileTextureIndex(t_gridMap *grid_map, int i, int val);
 t_entity    *ft_entityCreateGridMap(int size_x, int size_y, Texture2D *texture_ptr);
 void        ft_entityDrawGridMap(int i);
+void        ft_entityFreeDataGridMap(int i);
 
 #endif
