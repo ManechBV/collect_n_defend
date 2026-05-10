@@ -19,12 +19,12 @@ typedef struct  s_entity
 
 typedef struct  s_entityBuffer
 {
-    t_entity    **entity_chain_head;
+    t_entity    *entity_chain_head;
     t_entity    **entity_ptr_array;
     int         count;
 }   t_entityBuffer;
 
-static t_entityBuffer   G_entity_buffer = {0};
+static t_entityBuffer   *G_entity_buffer = NULL;
 
 t_entity    *ft_createEmptyEntityChain();
 int         ft_initEntityBuffer();
@@ -33,6 +33,7 @@ void        ft_drawEntityBuffer();
 
 int         ft_entityCreateGridMap(int size_x, int size_y, Texture2D *texture_ptr);
 void        ft_entityDrawGridMap(int i);
+
 
 t_entity    *ft_createEmptyEntityChain()
 {
@@ -53,57 +54,62 @@ t_entity    *ft_createEmptyEntityChain()
 
 int ft_initEntityBuffer()
 {
-    G_entity_buffer.count = 0;
-    G_entity_buffer.entity_ptr_array = NULL;
-    *G_entity_buffer.entity_chain_head = ft_createEmptyEntityChain();
-    if (*G_entity_buffer.entity_chain_head == NULL)
+    t_entity    *entity_chain;
+
+    G_entity_buffer = malloc(sizeof(t_entityBuffer));
+    if (!G_entity_buffer)
         return (-1);
 
-    G_entity_buffer.entity_ptr_array = malloc(sizeof(t_entity*) * (G_entity_buffer.count + 1));
-    if (G_entity_buffer.entity_ptr_array == NULL)
+    G_entity_buffer->count = 0;
+    G_entity_buffer->entity_ptr_array = NULL;
+
+    G_entity_buffer->entity_chain_head = ft_createEmptyEntityChain();
+    if (G_entity_buffer->entity_chain_head == NULL)
+        return (-1);
+
+    G_entity_buffer->entity_ptr_array = malloc(sizeof(t_entity*) * (G_entity_buffer->count + 1));
+    if (G_entity_buffer->entity_ptr_array == NULL)
         return (ft_errorInt("failed to malloc ptr entity array.", -1));
 
-    G_entity_buffer.entity_ptr_array[G_entity_buffer.count] = *G_entity_buffer.entity_chain_head;
+    G_entity_buffer->entity_ptr_array[G_entity_buffer->count] = G_entity_buffer->entity_chain_head;
 
+    return (0);
+}
+
+int    ft_entityBufferUpdateArray()
+{
+    int         i;
+    t_entity    *curr;
+
+    free(G_entity_buffer->entity_ptr_array);
+    G_entity_buffer->entity_ptr_array = malloc(sizeof(t_entity*) * (G_entity_buffer->count + 1));
+    if (!G_entity_buffer->entity_ptr_array)
+        return (ft_errorInt("failed to malloc ptr array", -1));
+
+    curr = G_entity_buffer->entity_chain_head;
+    i = 0;
+    while (i <= G_entity_buffer->count)
+    {
+        G_entity_buffer->entity_ptr_array[i] = curr;
+        curr = curr->next;
+        i++;
+    }
     return (0);
 }
 
 int ft_entityBufferPush(t_entity *entity)
 {
-    t_entity    *curr;
-    t_entity    **new_entity_ptr_array;
-    int         i;
-
     if (entity == NULL)
         return (ft_errorInt("entity pushed is NULL.", -1));
 
-    curr = *G_entity_buffer.entity_chain_head;
-    while (curr->data_type != ENTITY_DATA_TYPE_NULL)
-        curr = curr->next;
+    entity->next = G_entity_buffer->entity_chain_head;
+    G_entity_buffer->entity_chain_head->prev = entity;
+    G_entity_buffer->entity_chain_head = entity;
+    G_entity_buffer->count++;
 
-    entity->next = curr;
-    entity->prev = NULL;
-    curr->prev = entity;
+    ft_entityBufferUpdateArray();
 
-    G_entity_buffer.entity_chain_head = &entity;
-
-    G_entity_buffer.count++;
-    new_entity_ptr_array = malloc(sizeof(t_entity*) * (G_entity_buffer.count + 1));
-    if (new_entity_ptr_array == NULL)
-        return (ft_errorInt("failed to allocate new array entity ptr", -1));
-
-    i = 0;
-    while (i < G_entity_buffer.count)
-    {
-        new_entity_ptr_array[i] = G_entity_buffer.entity_ptr_array[i];
-        i++;
-    }
-    new_entity_ptr_array[i] = entity;
-
-    free(G_entity_buffer.entity_ptr_array);
-    G_entity_buffer.entity_ptr_array = new_entity_ptr_array;
-
-    return (i);
+    return (0);
 }
 
 int ft_entityCreateGridMap(int size_x, int size_y, Texture2D *texture_ptr)
@@ -115,7 +121,7 @@ int ft_entityCreateGridMap(int size_x, int size_y, Texture2D *texture_ptr)
         return (-1);
 
     grid_map_entity->data_type = ENTITY_DATA_TYPE_GRID_MAP;
-    grid_map_entity->data = ft_createGridMap(size_x, size_y, texture_ptr);
+    grid_map_entity->data = (void*)ft_createGridMap(size_x, size_y, texture_ptr);
     if (grid_map_entity->data == NULL)
         return (ft_errorInt("failed to create gridMap entity", -1));
     grid_map_entity->ftptr_drawEntityMethod = ft_entityDrawGridMap;
@@ -127,12 +133,12 @@ void    ft_entityDrawGridMap(int i)
 {
     t_gridMap   *grid_map;
 
-    if (G_entity_buffer.entity_ptr_array[i]->data_type != ENTITY_DATA_TYPE_GRID_MAP)
+    if (G_entity_buffer->entity_ptr_array[i]->data_type != ENTITY_DATA_TYPE_GRID_MAP)
     {
         ft_error("index passed does not point to a gridMap entity.");
         return ;
     }
-    grid_map = (t_gridMap*) G_entity_buffer.entity_ptr_array[i]->data;
+    grid_map = (t_gridMap*) G_entity_buffer->entity_ptr_array[i]->data;
     ft_drawGridMap(grid_map, 100, 100, 2.0f);
 }
 
@@ -141,10 +147,10 @@ void    ft_drawEntityBuffer()
     int i;
 
     i = 0;
-    while (i < G_entity_buffer.count)
+    while (i < G_entity_buffer->count)
     {
-        if (G_entity_buffer.entity_ptr_array[i]->ftptr_drawEntityMethod != NULL)
-            G_entity_buffer.entity_ptr_array[i]->ftptr_drawEntityMethod(i);
+        if (G_entity_buffer->entity_ptr_array[i]->ftptr_drawEntityMethod != NULL)
+            G_entity_buffer->entity_ptr_array[i]->ftptr_drawEntityMethod(i);
         i++;
     }
 }
