@@ -10,6 +10,38 @@
 void    *ft_error(char *msg);
 int    ft_errorInt(char *msg, int ret);
 
+//  entityBuffer.c
+enum    e_entityDataType
+{
+    ENTITY_DATA_TYPE_NULL,
+    ENTITY_DATA_TYPE_BASIC,
+    ENTITY_DATA_TYPE_GRID_MAP
+};
+
+typedef struct  s_entity
+{
+    void                    *data;
+    enum e_entityDataType   data_type;
+    void                    (*ftptr_drawEntityMethod)(int i);
+    struct s_entity         *next;
+    struct s_entity         *prev;
+}   t_entity;
+
+typedef struct  s_entityBuffer
+{
+    t_entity    *entity_chain_head;
+    t_entity    **entity_ptr_array;
+    int         count;
+}   t_entityBuffer;
+
+extern t_entityBuffer   *G_entity_buffer;
+
+t_entity    *ft_createEmptyEntityChain();
+int         ft_initEntityBuffer();
+t_entity    *ft_entityBufferPush(t_entity *entity);
+void        ft_drawEntityBuffer();
+void        ft_freeEntityBuffer();
+
 //  gridMap.c
 enum    e_tileType
 {
@@ -42,5 +74,7 @@ t_gridMap   *ft_createGridMap(int size_x, int size_y, Texture2D *texture_ptr);
 void        ft_drawGridMap(t_gridMap *grid_map, int off_x, int off_y, float scale);
 void        ft_freeGridMap(t_gridMap *grid_map);
 void        ft_gridMapSetTileTextureIndex(t_gridMap *grid_map, int i, int val);
+t_entity    *ft_entityCreateGridMap(int size_x, int size_y, Texture2D *texture_ptr);
+void        ft_entityDrawGridMap(int i);
 
 #endif

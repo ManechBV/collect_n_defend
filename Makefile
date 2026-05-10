@@ -1,4 +1,4 @@
-SRCS=src/main.c src/errorMsg.c src/gridMap.c
+SRCS=src/main.c src/errorMsg.c src/gridMap.c src/entityBuffer.c
 RAYLIB= lib/libraylib.a -lGL -lm -lpthread -ldl -lrt -lX11 -g
 INCLUDE= -Iinclude -Isrc
 NAME=c0ll3ctNd3f3nd
